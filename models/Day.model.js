@@ -37,14 +37,14 @@ const daySchema = new Schema({
     required: true,
     enum: ["Angry", "Calm", "Excited", "Happy", "Sad", "Stressed", "Tired"],
   },
-  week: {
-    type: Number,
+  month: {
+    type: String,
     required: true,
   },
   day: {
     type: Number,
     min: 1,
-    max: 7,
+    max: 31,
     required: true,
   },
   user: {

@@ -10,6 +10,7 @@ const saltRounds = 10;
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
 const Session = require("../models/Session.model");
+const Day = require("../models/Day.model");
 
 // Require necessary middlewares in order to control access to specific routes
 const shouldNotBeLoggedIn = require("../middlewares/shouldNotBeLoggedIn");
@@ -145,6 +146,31 @@ router.delete("/logout", isLoggedIn, (req, res) => {
       console.log(err);
       res.status(500).json({ errorMessage: err.message });
     });
+});
+
+router.post("/upload", isLoggedIn, (req, res) => {
+  // console.log("HEADERS", req);
+  const { work, sleep, chores, leisure, selfCare, mood, day, month } = req.body;
+
+  if (+work + +sleep + +chores + +leisure + +selfCare > 24) {
+    return res
+      .status(400)
+      .json({ errorMessage: "Theres Not That Many Hours In The Day!" });
+  }
+  Day.create({
+    work,
+    sleep,
+    chores,
+    leisure,
+    selfCare,
+    mood,
+    day,
+    month,
+    user: req.user._id,
+  }).then((newDay) => {
+    // console.log("new day post", newDay);
+    res.json({ newDay });
+  });
 });
 
 module.exports = router;
