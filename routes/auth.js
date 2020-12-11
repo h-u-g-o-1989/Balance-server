@@ -173,4 +173,10 @@ router.post("/upload", isLoggedIn, (req, res) => {
   });
 });
 
+router.get("/daily-report", isLoggedIn, (req, res) => {
+  Day.find({ user: req.user._id }).then((allDays) => {
+    res.json(allDays);
+  });
+});
+
 module.exports = router;
