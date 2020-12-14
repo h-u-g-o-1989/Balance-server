@@ -157,6 +157,12 @@ router.post("/upload", isLoggedIn, (req, res) => {
       .status(400)
       .json({ errorMessage: "Theres Not That Many Hours In The Day!" });
   }
+  if (+work + +sleep + +chores + +leisure + +selfCare < 24) {
+    return res.status(400).json({
+      errorMessage:
+        "Please fill in the information for all the hours in the day",
+    });
+  }
   Day.create({
     work,
     sleep,
@@ -175,9 +181,11 @@ router.post("/upload", isLoggedIn, (req, res) => {
 
 // Get the daily report (display)
 router.get("/daily-report", isLoggedIn, (req, res) => {
-  Day.find({ user: req.user._id }).then((allDays) => {
-    res.json(allDays);
-  });
+  Day.find({ user: req.user._id })
+    .sort({ _id: -1 })
+    .then((allDays) => {
+      res.json(allDays);
+    });
 });
 
 // Single day get
@@ -199,15 +207,19 @@ router.put("/:id", isLoggedIn, (req, res) => {
 });
 
 // Delete single day
-router.delete("/:id", isLoggedIn, (req, res) => {
-  const { dayId } = req.params;
-  console.log("dayId: ", dayId);
-  Day.findByIdAndDelete(dayId, () => {
+router.delete("/delete/:id", isLoggedIn, (req, res) => {
+  const { id } = req.params;
+  Day.findByIdAndDelete(id).then((deletedDay) => {
+    console.log(deletedDay);
+    res.json(deletedDay);
+  });
+  // console.log("dayId: ", dayId);
+  /*  Day.findByIdAndDelete(dayId, () => {
     console.log("Day deleted");
   }).then((deletedDay) => {
     console.log(deletedDay);
     res.redirect("/Daily-Report");
-  });
+  }); */
 });
 
 // Missing some logic in services/auth ???
