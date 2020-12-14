@@ -173,10 +173,43 @@ router.post("/upload", isLoggedIn, (req, res) => {
   });
 });
 
+// Get the daily report (display)
 router.get("/daily-report", isLoggedIn, (req, res) => {
   Day.find({ user: req.user._id }).then((allDays) => {
     res.json(allDays);
   });
 });
+
+// Single day get
+router.get("/:id", (req, res) => {
+  Day.findById(req.params.id)
+    .then((singleDay) => {
+      res.json(singleDay);
+    })
+    .catch((err) => console.log(err));
+});
+
+// Edit single day
+router.put("/:id", isLoggedIn, (req, res) => {
+  Day.findByIdAndUpdate(req.params.id, req.body, { new: true }).then(
+    (dayUpdated) => {
+      res.json({ message: "okidok", dayUpdated });
+    }
+  );
+});
+
+// Delete single day
+router.delete("/:id", isLoggedIn, (req, res) => {
+  const { dayId } = req.params;
+  console.log("dayId: ", dayId);
+  Day.findByIdAndDelete(dayId, () => {
+    console.log("Day deleted");
+  }).then((deletedDay) => {
+    console.log(deletedDay);
+    res.redirect("/Daily-Report");
+  });
+});
+
+// Missing some logic in services/auth ???
 
 module.exports = router;
