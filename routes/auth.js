@@ -223,5 +223,7 @@ router.delete("/delete/:id", isLoggedIn, (req, res) => {
 });
 
 // Missing some logic in services/auth ???
-
+router.delete("/account", isLoggedIn, (req, res) => {
+  User.findByIdAndDelete(req.user._id).then((data) => res.json(true));
+});
 module.exports = router;
